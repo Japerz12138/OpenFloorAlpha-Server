@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="OpenFloorAlpha-Server:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/OpenFloorAlpha_Server_jar</output-path>
+    <root id="archive" name="OpenFloorAlpha-Server.jar">
+      <element id="module-output" name="OpenFloorAlpha-Server" />
+    </root>
+  </artifact>
+</component>
