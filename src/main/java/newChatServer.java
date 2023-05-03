@@ -4,7 +4,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class newChatServer {
+
+public class newChatServer extends Thread{
     private ServerSocket serverSocket;
     private List<ClientHandler> clientHandlers;
 
@@ -21,7 +22,7 @@ public class newChatServer {
 
     public void start() {
 
-        System.out.println("Server started");
+        System.out.println("Chat service started");
 
         while (true) {
             try {
@@ -50,102 +51,46 @@ public class newChatServer {
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             writer = new PrintWriter(clientSocket.getOutputStream(), true);
         }
-//    Original Function, Leave it here just for now
-//    @Override
-//    public void run() {
-//        try {
-//            // Read the user's nickname from the client
-//            String line = reader.readLine();
-//            if (line.startsWith("join ")) {
-//                username = line.substring(5);
-//                System.out.println("[INFO] User " + username + " joined the chat!");
-//                broadcast("\n[INFO] " + username + " has joined the chat!");
-//                broadcast("join " + username);
-//            }
-//
-//            InputStream inputStream = clientSocket.getInputStream();
-//            while (true) {
-//                line = reader.readLine();
-//                if (line == null || line.equals("quit")) {
-//                    broadcast("quit " + username);
-//                    break;
-//                }
-//                System.out.println(username + ": " + line);
-//                broadcast("\n" + username + ": " + line);
-//
-//                // The client has sent a file
-//                if (line.startsWith("file ")) {
-//                    String fileName = line.substring(5);
-//                    byte[] fileContentBytes = readBytesFromStream(inputStream);
-//                    String savePath = "I:/CODE/DATA/" + fileName;
-//                    // Write file to disk
-//                    FileOutputStream fileOutputStream = new FileOutputStream(savePath);
-//                    fileOutputStream.write(fileContentBytes);
-//                    fileOutputStream.close();
-//
-//                    broadcast(username + " just sent a file: " + fileName);
-//                    broadcast("file " + fileName);
-//
-//                    if (getFileExtension(fileName).equalsIgnoreCase("txt")) {
-//                        //TODO: Do something with txt
-//                    }
-//                    // Send file to all clients
-//                    for (ClientHandler handler : clientHandlers) {
-//                        if (handler != this) {
-//                            handler.writer.println("file " + fileName + "\n");
-//                            handler.clientSocket.getOutputStream().write(fileContentBytes);
-//                        }
-//                    }
-//                }
-//            }
     @Override
     public void run() {
         try {
-            DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
-
-            int fileNameLength = dataInputStream.readInt();
-
-            if (fileNameLength > 0) {
-                byte[] fileNameBytes = new byte[fileNameLength];
-                dataInputStream.readFully(fileNameBytes, 0, fileNameBytes.length);
-                String fileName = new String(fileNameBytes);
-
-                int fileContentLength = dataInputStream.readInt();
-
-                if (fileContentLength > 0) {
-                    byte[] fileContentBytes = new byte[fileContentLength];
-                    dataInputStream.readFully(fileContentBytes, 0, fileContentLength);
-
-                    String savePath = "I:/CODE/DATA/" + fileName;
-
-                    if (getFileExtension(fileName).equalsIgnoreCase("txt")) {
-                        String txtContent = new String(fileContentBytes);
-                        // Write file to disk
-                        FileOutputStream fileOutputStream = new FileOutputStream(savePath);
-                        fileOutputStream.write(fileContentBytes);
-                        fileOutputStream.close();
-                        broadcast(username + " just send a file: " +fileName);
-                        broadcast(txtContent);
-                        System.out.println("A new file \"" + fileName + "\" has been saved to " + savePath + " !");
-                        //TODO: Do something shit with txt
-                    } else if (getFileExtension(fileName).equalsIgnoreCase("png")) {
-                        // Write file to disk
-                        FileOutputStream fileOutputStream = new FileOutputStream(savePath);
-                        fileOutputStream.write(fileContentBytes);
-                        fileOutputStream.close();
-                        broadcast(username + " just send a file: " +fileName);
-                        System.out.println("A new file \"" + fileName + "\" has been saved to " + savePath + " !");
-                    }
-
-    //                // send file to all clients
-    //                for (ClientHandler handler : clientHandlers) {
-    //                    if (handler != this) {
-    //                        handler.writer.println("file " + fileName);
-    //                        handler.clientSocket.getOutputStream().write(fileContentBytes); //TODO: I can't just return this damn metadata, do something with it!
-    //                    }
-    //                }
-                }
-            }
+//            DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
+//
+//            int fileNameLength = dataInputStream.readInt();
+//
+//            if (fileNameLength > 0) {
+//                byte[] fileNameBytes = new byte[fileNameLength];
+//                dataInputStream.readFully(fileNameBytes, 0, fileNameBytes.length);
+//                String fileName = new String(fileNameBytes);
+//
+//                int fileContentLength = dataInputStream.readInt();
+//
+//                if (fileContentLength > 0) {
+//                    byte[] fileContentBytes = new byte[fileContentLength];
+//                    dataInputStream.readFully(fileContentBytes, 0, fileContentLength);
+//
+//                    String savePath = "I:/CODE/DATA/" + fileName;
+//
+//                    if (getFileExtension(fileName).equalsIgnoreCase("txt")) {
+//                        String txtContent = new String(fileContentBytes);
+//                        // Write file to disk
+//                        FileOutputStream fileOutputStream = new FileOutputStream(savePath);
+//                        fileOutputStream.write(fileContentBytes);
+//                        fileOutputStream.close();
+//                        broadcast(username + " just send a file: " +fileName);
+//                        broadcast(txtContent);
+//                        System.out.println("A new file \"" + fileName + "\" has been saved to " + savePath + " !");
+//                        //TODO: Do something shit with txt
+//                    } else if (getFileExtension(fileName).equalsIgnoreCase("png")) {
+//                        // Write file to disk
+//                        FileOutputStream fileOutputStream = new FileOutputStream(savePath);
+//                        fileOutputStream.write(fileContentBytes);
+//                        fileOutputStream.close();
+//                        broadcast(username + " just send a file: " +fileName);
+//                        System.out.println("A new file \"" + fileName + "\" has been saved to " + savePath + " !");
+//                    }
+//                }
+//            }
 
         // Read the user's nickname from the client
         String line = reader.readLine();
@@ -212,36 +157,41 @@ public class newChatServer {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        newChatServer server = new newChatServer(2333);
-        server.start();
+    public static void main(String[] args) throws IOException,InterruptedException {
+        //newFileServer fileServer = new newFileServer(2334);
+        newChatServer chatServer = new newChatServer(2333);
 
-    }
+        //Thread fileServerThread = new Thread(fileServer);
 
-    public void Myfile (int id, String name, byte[] data, String fileExtension) {
-        this.id = id;
-        this.name = name;
-        this.data = data;
-        this.fileExtension = fileExtension;
+        //fileServerThread.start();
+        chatServer.start();
+        //fileServerThread.join();
     }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
-    public void setFileExtension(String fileExtension) {
-        this.fileExtension = fileExtension;
-    }
-
-    public int getId() {
-        return id;
-    }
+//
+//    public void Myfile (int id, String name, byte[] data, String fileExtension) {
+//        this.id = id;
+//        this.name = name;
+//        this.data = data;
+//        this.fileExtension = fileExtension;
+//    }
+//
+//    public void setId(int id) {
+//        this.id = id;
+//    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    public void setData(byte[] data) {
+//        this.data = data;
+//    }
+//
+//    public void setFileExtension(String fileExtension) {
+//        this.fileExtension = fileExtension;
+//    }
+//
+//    public int getId() {
+//        return id;
+//    }
 }
