@@ -1,3 +1,5 @@
+package com.nyit.japerz;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -34,6 +36,7 @@ public class newChatServer extends Thread {
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
                 clientHandlers.add(clientHandler);
                 clientHandler.start();
+
             } catch (IOException e) {
                 System.out.println("Error accepting client connection: " + e.getMessage());
             }
@@ -55,44 +58,6 @@ public class newChatServer extends Thread {
         @Override
         public void run() {
             try {
-//            DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
-//
-//            int fileNameLength = dataInputStream.readInt();
-//
-//            if (fileNameLength > 0) {
-//                byte[] fileNameBytes = new byte[fileNameLength];
-//                dataInputStream.readFully(fileNameBytes, 0, fileNameBytes.length);
-//                String fileName = new String(fileNameBytes);
-//
-//                int fileContentLength = dataInputStream.readInt();
-//
-//                if (fileContentLength > 0) {
-//                    byte[] fileContentBytes = new byte[fileContentLength];
-//                    dataInputStream.readFully(fileContentBytes, 0, fileContentLength);
-//
-//                    String savePath = "I:/CODE/DATA/" + fileName;
-//
-//                    if (getFileExtension(fileName).equalsIgnoreCase("txt")) {
-//                        String txtContent = new String(fileContentBytes);
-//                        // Write file to disk
-//                        FileOutputStream fileOutputStream = new FileOutputStream(savePath);
-//                        fileOutputStream.write(fileContentBytes);
-//                        fileOutputStream.close();
-//                        broadcast(username + " just send a file: " +fileName);
-//                        broadcast(txtContent);
-//                        System.out.println("A new file \"" + fileName + "\" has been saved to " + savePath + " !");
-//                        //TODO: Do something shit with txt
-//                    } else if (getFileExtension(fileName).equalsIgnoreCase("png")) {
-//                        // Write file to disk
-//                        FileOutputStream fileOutputStream = new FileOutputStream(savePath);
-//                        fileOutputStream.write(fileContentBytes);
-//                        fileOutputStream.close();
-//                        broadcast(username + " just send a file: " +fileName);
-//                        System.out.println("A new file \"" + fileName + "\" has been saved to " + savePath + " !");
-//                    }
-//                }
-//            }
-
                 // Read the user's nickname from the client
                 String line = reader.readLine();
                 if (line.startsWith("join ")) {
@@ -112,8 +77,6 @@ public class newChatServer extends Thread {
                     }
                     System.out.println(username + ": " + line);
                     broadcast("\n" + username + ": " + line);
-
-
                 }
 
                 // Handle client disconnection
@@ -121,10 +84,13 @@ public class newChatServer extends Thread {
                 broadcast("[INFO] " + username + " has left the chat!");
                 clientHandlers.remove(this);
                 clientSocket.close();
+
             } catch (IOException e) {
                 System.out.println("Error handling client connection: " + e.getMessage());
             }
         }
+
+
 
         // Helper method to read all bytes from an input stream
         private byte[] readBytesFromStream(InputStream inputStream) throws IOException {
@@ -158,42 +124,9 @@ public class newChatServer extends Thread {
         }
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        //newFileServer fileServer = new newFileServer(2334);
+    public static void main(String[] args) throws IOException{
         newChatServer chatServer = new newChatServer(2333);
-
-        //Thread fileServerThread = new Thread(fileServer);
-
-        //fileServerThread.start();
         chatServer.start();
-        //fileServerThread.join();
     }
 }
-//
-//    public void Myfile (int id, String name, byte[] data, String fileExtension) {
-//        this.id = id;
-//        this.name = name;
-//        this.data = data;
-//        this.fileExtension = fileExtension;
-//    }
-//
-//    public void setId(int id) {
-//        this.id = id;
-//    }
-//
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//
-//    public void setData(byte[] data) {
-//        this.data = data;
-//    }
-//
-//    public void setFileExtension(String fileExtension) {
-//        this.fileExtension = fileExtension;
-//    }
-//
-//    public int getId() {
-//        return id;
-//    }
 
