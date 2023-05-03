@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class newChatServer extends Thread{
+public class newChatServer extends Thread {
     private ServerSocket serverSocket;
     private List<ClientHandler> clientHandlers;
 
@@ -51,9 +51,10 @@ public class newChatServer extends Thread{
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             writer = new PrintWriter(clientSocket.getOutputStream(), true);
         }
-    @Override
-    public void run() {
-        try {
+
+        @Override
+        public void run() {
+            try {
 //            DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
 //
 //            int fileNameLength = dataInputStream.readInt();
@@ -92,38 +93,38 @@ public class newChatServer extends Thread{
 //                }
 //            }
 
-        // Read the user's nickname from the client
-        String line = reader.readLine();
-        if (line.startsWith("join ")) {
-            username = line.substring(5);
-            System.out.println("[INFO] User " + username + "joined the chat!");
-            broadcast("[INFO] " + username + " has joined the chat!");
-            broadcast("join " + username);
-        }
+                // Read the user's nickname from the client
+                String line = reader.readLine();
+                if (line.startsWith("join ")) {
+                    username = line.substring(5);
+                    System.out.println("[INFO] User " + username + "joined the chat!");
+                    broadcast("[INFO] " + username + " has joined the chat!");
+                    broadcast("join " + username);
+                }
 
-        // Read messages from the client and broadcast them to all other clients
-        while (true) {
+                // Read messages from the client and broadcast them to all other clients
+                while (true) {
 
-            line = reader.readLine();
-            if (line == null || line.equals("quit")) {
-                broadcast("quit " + username);
-                break;
+                    line = reader.readLine();
+                    if (line == null || line.equals("quit")) {
+                        broadcast("quit " + username);
+                        break;
+                    }
+                    System.out.println(username + ": " + line);
+                    broadcast("\n" + username + ": " + line);
+
+
+                }
+
+                // Handle client disconnection
+                System.out.println("[INFO] User " + username + " left the chat!");
+                broadcast("[INFO] " + username + " has left the chat!");
+                clientHandlers.remove(this);
+                clientSocket.close();
+            } catch (IOException e) {
+                System.out.println("Error handling client connection: " + e.getMessage());
             }
-            System.out.println(username + ": " + line);
-            broadcast("\n" + username + ": " + line);
-
-
         }
-
-            // Handle client disconnection
-            System.out.println("[INFO] User " + username + " left the chat!");
-            broadcast("[INFO] " + username + " has left the chat!");
-            clientHandlers.remove(this);
-            clientSocket.close();
-        } catch (IOException e) {
-            System.out.println("Error handling client connection: " + e.getMessage());
-        }
-    }
 
         // Helper method to read all bytes from an input stream
         private byte[] readBytesFromStream(InputStream inputStream) throws IOException {
@@ -151,13 +152,13 @@ public class newChatServer extends Thread{
         //This would not work with .tar.gz
         int i = fileName.lastIndexOf('.');
         if (i > 0) {
-            return fileName.substring(i+1);
+            return fileName.substring(i + 1);
         } else {
             return "No extension found!";
         }
     }
 
-    public static void main(String[] args) throws IOException,InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         //newFileServer fileServer = new newFileServer(2334);
         newChatServer chatServer = new newChatServer(2333);
 
@@ -167,6 +168,7 @@ public class newChatServer extends Thread{
         chatServer.start();
         //fileServerThread.join();
     }
+}
 //
 //    public void Myfile (int id, String name, byte[] data, String fileExtension) {
 //        this.id = id;
@@ -194,4 +196,4 @@ public class newChatServer extends Thread{
 //    public int getId() {
 //        return id;
 //    }
-}
+

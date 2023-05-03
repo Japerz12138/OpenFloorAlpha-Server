@@ -93,12 +93,6 @@ public class newFileServer extends Thread{
             }
         }
 
-
-        public static void main(String[] args) throws IOException{
-            newFileServer server = new newFileServer(2334);
-            server.start();
-        }
-
         public static String getFileExtension(String fileName) {
             //This would not work with .tar.gz
             int i = fileName.lastIndexOf('.');
@@ -108,5 +102,10 @@ public class newFileServer extends Thread{
                 return "No extension found!";
             }
         }
+    }
+
+    public static void main(String[] args) throws IOException{
+        newFileServer server = new newFileServer(2334);
+        server.start();
     }
 }
